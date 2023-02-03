@@ -1,5 +1,7 @@
 import random
 import itertools
+# TODO implement hash
+
 
 # function to perform brute force to find key 
 def brute_force(ciphertext, plaintext):
@@ -62,13 +64,17 @@ def decrypt(cipher_text, key):
         decrypted_text += key[cipher_text[i: i+2]]
     return decrypted_text
 
-# to check if the decrypted_text matches the orignal plain_text.
-def checkMatch(plain_text, decrypted_text):
-    if plain_text == decrypted_text: print("it's a match")
-    else: print("they dont match")
+# to check if the hash of decrypted_user_text matches the hash.
+def checkMatch(decrypted_text):
+    n = len(plain_text)
+    decrypted_user_text = decrypted_text[0:n//2]
+    decrypted_hash = decrypted_text[n//2:]  
+    if decrypted_hash == hash(decrypted_user_text): print("Its a match")
+    else : print("Wrong Hash")
 
 if __name__ == "__main__":   
-    plain_text = get_plain_text()
+    user_text = get_plain_text()
+    plain_text = user_text + hash(user_text)
     print(plain_text)
     key = get_key()
     print(key)
@@ -76,5 +82,5 @@ if __name__ == "__main__":
     print(cipher_text)
     decrypted_text = decrypt(cipher_text, key)
     print(decrypted_text)
-    checkMatch(plain_text, decrypted_text)
+    checkMatch(decrypted_text)
     brute_force(cipher_text, plain_text)
