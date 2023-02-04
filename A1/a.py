@@ -27,7 +27,7 @@ def printt(msg, val):
     p+="\n"
     print(msg + " " + str(val) + p)
 
-# returns random string of given length
+# returns random string of given length.
 def generate_random_string(len):
     character_set = "ABC"
     s = ''.join(random.choices(character_set,k = len))
