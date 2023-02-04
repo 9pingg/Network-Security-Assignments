@@ -33,7 +33,7 @@ def generate_random_string(len):
     s = ''.join(random.choices(character_set,k = len))
     return s
 
-# function to hash a given string
+# function returns the hash of a given string
 def hash(user_text, toPrint):
     hash_256 = hashlib.sha256(user_text.encode('utf-8')).hexdigest()
     hashstring = ""
