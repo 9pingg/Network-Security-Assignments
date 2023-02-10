@@ -1,7 +1,7 @@
 import random
 import itertools
 import hashlib
-
+import os
 # function to check whether the entered string is valid or not.
 def check(p_text, character_set):
     # only takes in strings with even length
@@ -105,12 +105,31 @@ def brute_force(ciphertext, plaintext):
     
 if __name__ == "__main__":   
     # user_text = get_plain_text()
-    user_text = generate_random_string(100)
+    # user_text = generate_random_string(5)
+    
+    print ("Choices:\n1) generate a random string as user_text\n2) input provided by user: ")
+    choice = input().strip()
+    user_text = ""
+    if choice == "1":
+        print("random string to be generated, enter length of the string:")
+        len = int(input().strip())
+        if len % 2 == 0:
+            user_text = generate_random_string(len)
+        else:
+            print("length should be even, restart......")
+            quit()
+    elif choice == "2":
+        user_text = get_plain_text()
+    else:
+        print("Invalid choice")
+        quit()
     printt("user_text:", user_text)
     plain_text = user_text + hash(user_text,1)
     printt("plain_text:", plain_text)
     key = get_key()
     printt("key:", key)
+
+    print(type(key), type(user_text))
     cipher_text = encrypt(plain_text, key)
     printt("cipher_text:", cipher_text)
     decrypted_text = decrypt(cipher_text, key)
