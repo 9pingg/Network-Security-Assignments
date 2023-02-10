@@ -28,9 +28,9 @@ def printt(msg, val):
     print(msg + " " + str(val) + p)
 
 # returns random string of given length.
-def generate_random_string(len):
+def generate_random_string(length):
     character_set = "ABC"
-    s = ''.join(random.choices(character_set,k = len))
+    s = ''.join(random.choices(character_set,k = length))
     return s
 
 # function returns the hash of a given string
@@ -67,6 +67,7 @@ def encrypt(plain_text, key):
     c_text = ""
     for i in range(0, len(plain_text), 2):
         c_text += key[plain_text[i: i+2]]
+        
     return c_text
 
 # function takes in key and the plain text as parameters, and returns the cipher text
@@ -83,56 +84,25 @@ def checkMatch(decrypted_text):
     decrypted_user_text = decrypted_text[0:n-64]
     decrypted_hash = decrypted_text[-64:]  
     print("hashing the decrypted_user_text to check if it matches the decrypted_hash")
-    if decrypted_hash == hash(decrypted_user_text, 0): printt("Its a match, after hashing the user_text: ", hash(decrypted_user_text, 0))
-    else : print("Wrong Hash")
-
-# function to perform brute force to find key 
-def brute_force(ciphertext, plaintext):
-    p = ['AA', 'AB', 'AC', 'BB', 'BA', 'BC', 'CC', 'CA', 'CB']
-    e_p =  ['AA', 'AB', 'AC', 'BB', 'BA', 'BC', 'CC', 'CA', 'CB']
-    dics = []
-    for perm in itertools.permutations(p, len(e_p)):
-        dics.append(dict(zip(perm, e_p)))
-    print("total possible keys: ", len(dics))
-    keysChecked = 0
-    for d in dics:
-        if plaintext == decrypt(ciphertext, d): 
-            print("Key Found: ", d)
-            printt("total keys checked: " , keysChecked)
-            break
-        keysChecked += 1
-    return "Not Found"    
+    if decrypted_hash == hash(decrypted_user_text, 0): 
+        printt("Its a match, after hashing the decrypted_user_text: ", hash(decrypted_user_text, 0))
+        return 1
+    else : 
+        print("Wrong Hash")
+        return 0
     
 if __name__ == "__main__":   
-    # user_text = get_plain_text()
-    # user_text = generate_random_string(5)
-    
-    print ("Choices:\n1) generate a random string as user_text\n2) input provided by user: ")
-    choice = input().strip()
-    user_text = ""
-    if choice == "1":
-        print("random string to be generated, enter length of the string:")
-        len = int(input().strip())
-        if len % 2 == 0:
-            user_text = generate_random_string(len)
-        else:
-            print("length should be even, restart......")
-            quit()
-    elif choice == "2":
-        user_text = get_plain_text()
-    else:
-        print("Invalid choice")
-        quit()
-    printt("user_text:", user_text)
-    plain_text = user_text + hash(user_text,1)
-    printt("plain_text:", plain_text)
     key = get_key()
-    printt("key:", key)
-
-    print(type(key), type(user_text))
-    cipher_text = encrypt(plain_text, key)
-    printt("cipher_text:", cipher_text)
-    decrypted_text = decrypt(cipher_text, key)
-    printt("decrypted_text:", decrypted_text)
-    checkMatch(decrypted_text)
-    brute_force(cipher_text, plain_text)
+    print("known key:", key)
+    for i in range(5):
+        print("\n*********************    GENERATING FOR PT ", i)
+        print("\n\n")
+        user_text = generate_random_string(100)
+        printt("user_text:", user_text)
+        plain_text = user_text + hash(user_text,1)
+        printt("plain_text:", plain_text)
+        cipher_text = encrypt(plain_text, key)
+        printt("cipher_text:", cipher_text)
+        decrypted_text = decrypt(cipher_text, key)
+        printt("decrypted_text:", decrypted_text)
+        checkMatch(decrypted_text)
