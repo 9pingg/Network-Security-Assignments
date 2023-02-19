@@ -98,14 +98,6 @@ def add_round_key(state, key):
     return new_state
 
 
-def galois_mult(num, mult):
-    res = 0xff & (num << 1)
-    if mult == 2:
-        if num < 128: return res
-        else: return res ^ 0x1b
-    if mult == 3:
-        return num ^ galois_mult(num, 2)
-
 def mix_columns(state):
     """ 
     Performs the MixColumns step in AES on the input matrix.
