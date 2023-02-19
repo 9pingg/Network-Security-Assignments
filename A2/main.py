@@ -1,23 +1,32 @@
 import secrets
 import tables
-
+from mixcolumns import galois_mult
 NO_OF_ROUNDS = 10
 BLOCK_SIZE = 128
 
-# gives a 16 byte hex string (total 32 characters)
+
 def get_random_bytes(bytes):
+    '''
+    Generates a random 16 byte hex string (total 32 characters)
+    Args: bytes (int): The number of bytes of the hexadecimal string.
+    Returns: str: A hexademical string of 16 bytes.
+    '''
     return secrets.token_hex(bytes)
     
- # takes in a 16 byte hex string and returns a state matrix
 def get_state(str):
+    '''
+    Takes in a 16 byte hex string and returns a 4x4 state matrix.
+    '''
     state = [[0 for _ in range(4)] for _ in range(4)]
     for i in range(4):
         for j in range(4):
             state[j][i] = int(str[8*i+2*j : 8*i + 2*(j+1)], 16)
     return state
 
-# prints the state, in a matrix form 
 def print_state(state, display = ""):
+    '''
+    Prints the input state matrix in a nicely formatted way.
+    '''
     print(display)
     for i in range(4):
         print("\n\n")
@@ -25,8 +34,25 @@ def print_state(state, display = ""):
             print(str(state[i][j]), end= "\t" )   
     print("\n\n")
 
+def get_string_from_state(state):
+    """
+    Converts a state matrix of decimal values to a hexadecimal representation and joins them into a single string.
+    Args:   state matrix 
+    Returns: str: A string containing the concatenated hexadecimal representation of the input values.
+    """
+    final_state = [0 for _ in range(16)]
+    for r in range(4):
+        for c in range(4):
+            final_state[r + 4 * c] = state[r][c]
+    res = ''.join([hex(x)[2:].zfill(2) for x in final_state])
+    return res
 
 def substitute_bytes(state):
+    """
+    Substitutes each byte in the input matrix using the AES S-Box.
+    Args: matrix: A 4x4 matrix of bytes to be substituted.
+    Returns: matrix: A 4x4 matrix with each byte substituted using the AES S-Box.
+    """
     new_state = state.copy()
     for i in range(4):
         for j in range(4):
@@ -36,6 +62,11 @@ def substitute_bytes(state):
     return new_state
 
 def inverse_substitute_bytes(state):
+    """
+    Substitutes each byte in the input matrix using the AES In-S-Box.
+    Args: matrix: A 4x4 matrix of bytes to be substituted.
+    Returns: matrix: A 4x4 matrix with each byte substituted using the AES In-S-Box.
+    """
     new_state = state.copy()
     for i in range(4):
         for j in range(4):
@@ -67,9 +98,32 @@ def add_round_key(state, key):
     return new_state
 
 
+def galois_mult(num, mult):
+    res = 0xff & (num << 1)
+    if mult == 2:
+        if num < 128: return res
+        else: return res ^ 0x1b
+    if mult == 3:
+        return num ^ galois_mult(num, 2)
+
 def mix_columns(state):
-    #TODO
-    return
+    """ 
+    Performs the MixColumns step in AES on the input matrix.
+    Args: matrix: A 4x4 matrix to be transformed.
+    Returns: matrix: A new 4x4 state  resulting from the MixColumns transformation.
+    """
+    new_state = [[0 for _ in range(4)] for _ in range(4)]
+    for c in range(4):
+        word_c = [state[i][c] for i in range(4)]
+        s0 = galois_mult(word_c[0], 2) ^ galois_mult(word_c[1], 3) ^ word_c[2] ^ word_c[3]
+        s1 = word_c[0] ^ galois_mult(word_c[1], 2) ^ galois_mult(word_c[2], 3) ^ word_c[3]
+        s2 = word_c[0] ^ word_c[1] ^ galois_mult(word_c[2], 2) ^ galois_mult(word_c[3], 3)
+        s3 = galois_mult(word_c[0], 3) ^ word_c[1] ^ word_c[2] ^ galois_mult(word_c[3], 2)
+        new_word_c = [s0, s1, s2, s3]
+        for i in range(4):
+            new_state[i][c] = new_word_c[i]
+    return new_state
+
 def inverse_mix_columns(state):
     #TODO
     return
@@ -77,18 +131,7 @@ def key_expansion(master_key):
     #TODO
     return
 
-def get_string_from_state(state):
-    """
-    Converts a state matrix of decimal values to a hexadecimal representation and joins them into a single string.
-    Args:   state matrix 
-    Returns: str: A string containing the concatenated hexadecimal representation of the input values.
-    """
-    final_state = [0 for _ in range(16)]
-    for r in range(4):
-        for c in range(4):
-            final_state[r + 4 * c] = state[r][c]
-    res = ''.join([hex(x)[2:].zfill(2) for x in final_state])
-    return res
+
 
 def encrypt_128(plain_text, master_key):
     s = get_state (plain_text)
