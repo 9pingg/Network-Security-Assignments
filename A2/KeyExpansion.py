@@ -41,11 +41,11 @@ def keyExpansion(key):
         word = w[i-4]
 
         if i % 4 == 0:
-            x = RotationOfWord(temp)
-            y = SubstitutionOfWord(x)
+            rotateWord = RotationOfWord(temp)
+            subword = SubstitutionOfWord(rotateWord)
             rconstant = RConstantTable[int(i/4)]
 
-            temp = HexandXor(y, hex(rconstant)[2:]) 
+            temp = HexandXor(subword, hex(rconstant)[2:]) 
             
         word = ''.join(word)
         temp = ''.join(temp)
@@ -59,10 +59,10 @@ def HexandXor(hex1, hex2):
     '''
     Convert to binary and xor it and  cut the prefix value return hex value.
     '''
-    bin1 = bin(int(str(hex1), 16))
-    bin2 = bin(int(str(hex2), 16))
+    binvalue1 = bin(int(str(hex1), 16))
+    binvalue2 = bin(int(str(hex2), 16))
     
-    xord = int(bin1, 2) ^ int(bin2, 2)
+    xord = int(binvalue1, 2) ^ int(binvalue2, 2)
 
     hexed = hex(xord)[2:]
 
