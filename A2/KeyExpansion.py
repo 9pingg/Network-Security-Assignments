@@ -1,7 +1,7 @@
 from secrets import token_hex
 
 # Using S-box table
-sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
+Sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
         0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
         0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
         0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75,
@@ -18,7 +18,8 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 
         0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
         0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]
 
-Rcon = [0x00000000, 0x01000000, 0x02000000,
+# Rconstant Table
+RConstantTable = [0x00000000, 0x01000000, 0x02000000,
         0x04000000, 0x08000000, 0x10000000, 
         0x20000000, 0x40000000, 0x80000000, 
         0x1b000000, 0x36000000]
@@ -26,107 +27,86 @@ Rcon = [0x00000000, 0x01000000, 0x02000000,
 
     
 def keyExpansion(key):
-    #prep w list to hold 44 tuples
     '''
-    Create a word array w, and to hold 44 tuples.
+    Create a word array w, and to hold 44 tuples,First fill out 4 words based on the key, then fill out the rest based on previews words, rotword, 
+    subword and rcon values and if multiple of 4 use rot, sub, rcon etc and at last xor the hex values.
     '''
     w = [()]*44
 
-    #fill out first 4 words based on the key
     for i in range(4):
         w[i] = (key[4*i], key[4*i+1], key[4*i+2], key[4*i+3])
 
-    #fill out the rest based on previews words, rotword, subword and rcon values
     for i in range(4, 44):
-        #get required previous keywords
         temp = w[i-1]
         word = w[i-4]
 
-        #if multiple of 4 use rot, sub, rcon etc
         if i % 4 == 0:
-            x = RotWord(temp)
-            y = SubstituteWord(x)
-            rconstant = Rcon[int(i/4)]
+            x = RotationOfWord(temp)
+            y = SubstitutionOfWord(x)
+            rconstant = RConstantTable[int(i/4)]
 
-            temp = hexandxor(y, hex(rconstant)[2:]) 
-
-        #creating strings of hex rather than tuple
+            temp = HexandXor(y, hex(rconstant)[2:]) 
+            
         word = ''.join(word)
         temp = ''.join(temp)
 
-        #xor the two hex values
-        xord = hexandxor(word, temp)
-        w[i] = (xord[:2], xord[2:4], xord[4:6], xord[6:8])
+        xorvalue = HexandXor(word, temp)
+        w[i] = (xorvalue[:2], xorvalue[2:4], xorvalue[4:6], xorvalue[6:8])
 
     return w
 
-#takes two hex values and calculates hex1 xor hex2
-def hexandxor(hex1, hex2):
+def HexandXor(hex1, hex2):
     '''
-    Convert to binary and xor it and return hex value.
+    Convert to binary and xor it and  cut the prefix value return hex value.
     '''
-    bin1 = hex2binary(hex1)
-    bin2 = hex2binary(hex2)
+    bin1 = bin(int(str(hex1), 16))
+    bin2 = bin(int(str(hex2), 16))
     
-    #Calculate the ord value
     xord = int(bin1, 2) ^ int(bin2, 2)
 
-    #cut prefix
     hexed = hex(xord)[2:]
-    
-    #leading 0s get cut above, if not length 8 add a leading 0
+
     if len(hexed) != 8:
         hexed = '0' + hexed
 
     return hexed
 
-#takes a hex value and returns binary
-def hex2binary(hex):
-    return bin(int(str(hex), 16))
+def RotationOfWord(word):
+    '''
+    Takes from 1 to the end, adds on from the start to 1
+    '''
+    return word[1:] + word[:1]
 
-
-#takes from 1 to the end, adds on from the start to 1
-def RotWord(word):
-	return word[1:] + word[:1]
-
-#selects correct value from sbox based on the current word
-def SubstituteWord(word):
-
+def SubstitutionOfWord(word):
+    '''
+       In this, Subsitituion of words take place, first loop throug the current word, then check first char, then second char
+       if its a letter(a-f) get corresponding decimal  #otherwise just take the value and add 1, get indexbase 
+       on row and col (16x16 grid) and get the value from sbox without prefix and at last check length to ensure 
+       leading 0s are not forgotton, then form tuple and return subsitute word.
+    '''
     sWord = ()
-
-    #loop throug the current word
     for i in range(4):
-
-        #check first char, if its a letter(a-f) get corresponding decimal
-        #otherwise just take the value and add 1
         if word[i][0].isdigit() == False:
             row = ord(word[i][0]) - 86
         else:
             row = int(word[i][0])+1
 
-        #repeat above for the seoncd char
         if word[i][1].isdigit() == False:
             col = ord(word[i][1]) - 86
         else:
             col = int(word[i][1])+1
 
-        #get the index base on row and col (16x16 grid)
         sBoxIndex = (row*16) - (17-col)
         
-        #get the value from sbox without prefix
-        piece = hex(sbox[sBoxIndex])[2:]
+        piecevalue = hex(Sbox[sBoxIndex])[2:]
         
-        #check length to ensure leading 0s are not forgotton
-        if len(piece) != 2:
-            piece = '0' + piece
+        if len(piecevalue) != 2:
+            piecevalue = '0' + piecevalue
 
-        #form tuple
-        sWord = (*sWord, piece)
-        #return string
+        sWord = (*sWord, piecevalue)
+
     return ''.join(sWord)
 
-
-# Return Concatenated Strings of keys
 def getresult(w):
     '''
     Returns the resultant array of keys and resutant length is 11.
@@ -146,21 +126,22 @@ def getresult(w):
         
 def main():
     
-    #Generating random key of 16 Bytes
+    '''
+    #Generating random key of 16 Bytes, and then Expansion of the Keys from key [0,43] and
+    generate 11 ley strings in the resultes array.
+    '''
     bytelist = (token_hex(16))
     key=[]
     for i in range(0,len(bytelist)-1):
         if(i%2==0):
             key.append(bytelist[i:i+2])
             
-    #Expansion of the Keys from key [0,43]
     w = keyExpansion(key)
 
     print("Key provided: " + "".join(key))
     
     print('\n')
     res =[]
-    # 11 keys in the resulted array.
     res = getresult(w)
     for i in range(0,len(res)):
         print(res[i])
