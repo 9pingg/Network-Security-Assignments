@@ -75,7 +75,8 @@ def RotationOfWord(word):
     '''
     Takes from 1 to the end, adds on from the start to 1
     '''
-    return word[1:] + word[:1]
+    result = word[1:] + word[:1]
+    return result
 
 def SubstitutionOfWord(word):
     '''
@@ -148,3 +149,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
