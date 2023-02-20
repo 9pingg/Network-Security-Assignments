@@ -1,6 +1,8 @@
 import secrets
-import tables
-from mixcolumns import galois_mult
+from mix_columns_utils import mix_columns, inverse_mix_columns
+from shift_rows_utils import shift_rows, inv_shift_rows
+from sub_bytes_utils import substitute_bytes, inverse_substitute_bytes
+
 NO_OF_ROUNDS = 10
 BLOCK_SIZE = 128
 
@@ -47,49 +49,6 @@ def get_string_from_state(state):
     res = ''.join([hex(x)[2:].zfill(2) for x in final_state])
     return res
 
-def substitute_bytes(state):
-    """
-    Substitutes each byte in the input matrix using the AES S-Box.
-    Args: matrix: A 4x4 matrix of bytes to be substituted.
-    Returns: matrix: A 4x4 matrix with each byte substituted using the AES S-Box.
-    """
-    new_state = state.copy()
-    for i in range(4):
-        for j in range(4):
-            r = state[i][j] // 0x10
-            c = state[i][j] % 0x10    
-            new_state[i][j] = tables.s_box[r][c]
-    return new_state
-
-def inverse_substitute_bytes(state):
-    """
-    Substitutes each byte in the input matrix using the AES In-S-Box.
-    Args: matrix: A 4x4 matrix of bytes to be substituted.
-    Returns: matrix: A 4x4 matrix with each byte substituted using the AES In-S-Box.
-    """
-    new_state = state.copy()
-    for i in range(4):
-        for j in range(4):
-            r = state[i][j] // 0x10
-            c = state[i][j] % 0x10    
-            new_state[i][j] = tables.inv_s_box[r][c] 
-    return new_state
-
-# ShiftRows transformation consists of shifting the rows of the state array by count bytes.
-def shift_rows(orignal_state):
-    state = orignal_state.copy()
-    state[1][0], state[1][1], state[1][2], state[1][3] = state[1][1], state[1][2], state[1][3], state[1][0]
-    state[2][0], state[2][1], state[2][2], state[2][3] = state[2][2], state[2][3], state[2][0], state[2][1]
-    state[3][0], state[3][1], state[3][2], state[3][3] = state[3][3], state[3][0], state[3][1], state[3][2]
-    return state
-
-def inv_shift_rows(orignal_state):
-    state = orignal_state.copy()
-    state[1][0], state[1][1], state[1][2], state[1][3] = state[1][3], state[1][0], state[1][1], state[1][2]
-    state[2][0], state[2][1], state[2][2], state[2][3] = state[2][2], state[2][3], state[2][0], state[2][1]
-    state[3][0], state[3][1], state[3][2], state[3][3] = state[3][1], state[3][2], state[3][3], state[3][0]
-    return state
-
 def add_round_key(state, key):
     new_state = state.copy()
     for r in range(4):
@@ -97,33 +56,9 @@ def add_round_key(state, key):
             new_state[r][c] = state[r][c] ^ key[r][c]
     return new_state
 
-
-def mix_columns(state):
-    """ 
-    Performs the MixColumns step in AES on the input matrix.
-    Args: matrix: A 4x4 matrix to be transformed.
-    Returns: matrix: A new 4x4 state  resulting from the MixColumns transformation.
-    """
-    new_state = [[0 for _ in range(4)] for _ in range(4)]
-    for c in range(4):
-        word_c = [state[i][c] for i in range(4)]
-        s0 = galois_mult(word_c[0], 2) ^ galois_mult(word_c[1], 3) ^ word_c[2] ^ word_c[3]
-        s1 = word_c[0] ^ galois_mult(word_c[1], 2) ^ galois_mult(word_c[2], 3) ^ word_c[3]
-        s2 = word_c[0] ^ word_c[1] ^ galois_mult(word_c[2], 2) ^ galois_mult(word_c[3], 3)
-        s3 = galois_mult(word_c[0], 3) ^ word_c[1] ^ word_c[2] ^ galois_mult(word_c[3], 2)
-        new_word_c = [s0, s1, s2, s3]
-        for i in range(4):
-            new_state[i][c] = new_word_c[i]
-    return new_state
-
-def inverse_mix_columns(state):
-    #TODO
-    return
 def key_expansion(master_key):
     #TODO
     return
-
-
 
 def encrypt_128(plain_text, master_key):
     s = get_state (plain_text)
