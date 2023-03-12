@@ -99,7 +99,7 @@ def start(bytes):
         if(i%2==0):
             key.append(bytes[i:i+2])
     res = keyExpansion(key)
-    print("Master key: " + "".join(key))
+    # print("Master key: " + "".join(key))
     return res
 
 

@@ -86,7 +86,7 @@ def encrypt_128(plain_text, master_key):
             e9 = s.copy()
             enc_round9 = get_string_from_state(e9)
         print(i, get_string_from_state(s))
-    print("output of the 1st encryption round: ", enc_round1)
+    print("\noutput of the 1st encryption round: ", enc_round1)
     print("output of the 9th encryption round: ", enc_round9)
     final_state = s.copy()
     cipher = get_string_from_state(final_state)
@@ -103,20 +103,21 @@ def decrypt_128(cipher_text, master_key):
         if i != NO_OF_ROUNDS:
             s = inv_shift_rows(s)
             s = inverse_substitute_bytes(s)
+            if i == 1:
+                d1 = s.copy()
+                dec_round1 = get_string_from_state(d1)
+            if i == 9:
+                d9 = s.copy()
+                dec_round9 = get_string_from_state(d9)
             s = add_round_key(s, keys[NO_OF_ROUNDS-i])           
             s = inverse_mix_columns(s)
         else:
             s = inv_shift_rows(s)
             s = inverse_substitute_bytes(s)
             s = add_round_key(s, keys[NO_OF_ROUNDS-i])   
-        if i == 1:
-            d1 = s.copy()
-            dec_round1 = get_string_from_state(d1)
-        if i == 9:
-            d9 = s.copy()
-            dec_round9 = get_string_from_state(d9)
+        
         print(i, get_string_from_state(s))
-    print("output of the 1st decryption round: ", dec_round1)
+    print("\noutput of the 1st decryption round: ", dec_round1)
     print("output of the 9th decryption round: ", dec_round9)
     final_state = s.copy()
     decrypted_string = get_string_from_state(final_state)
@@ -124,26 +125,20 @@ def decrypt_128(cipher_text, master_key):
 
 
 def main(): 
-    plain_text = get_random_bytes(16)
-    print("plain_text ", plain_text)
-    master_key = get_random_bytes(16)
-    state = get_state (plain_text)
-    key_check = get_state (master_key)
-    e = encrypt_128(plain_text, master_key)
-    d = decrypt_128(e, master_key)
-    print(plain_text,e,d)
-    print(plain_text == d)  
+    plain_text = "dd06309f04da87df644726e304234012"
+    print("\nplain_text ", plain_text)
+    master_key = "ddee540d70661c716d12c764c450ecee"
+    print("master key", master_key, "\n")
+    print("==== ENCRYPTION BEGINS ==== \n")
+    cipher_text = encrypt_128(plain_text, master_key)
+    print("\n==== DECRYPTION BEGINS ==== \n")
+    decrypted_text = decrypt_128(cipher_text, master_key)
 
-    # check 
+    print("\nplain_text: ", plain_text)
+    print("cipher_text: ", cipher_text)
+    print("decrypted_text: ", decrypted_text)
+    print(plain_text == decrypted_text)  
+
 
 if __name__ == '__main__':  
     main()
-# print(plain_text, master_key, "\n", state, type(state[0][0]))
-# print_state(state)
-# state = substitute_bytes(state)
-# print_state(state, "subbytes done")
-# state = shift_rows(state)
-# print_state(state, "shift rows done")
-# state = add_round_key(state, key_check)
-# print_state(state, "add round key done")
-# print(get_string_from_state(state))
