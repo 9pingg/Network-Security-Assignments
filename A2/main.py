@@ -123,12 +123,34 @@ def decrypt_128(cipher_text, master_key):
     decrypted_string = get_string_from_state(final_state)
     return decrypted_string
 
+def get_input(place):
+    while True:
+        print("Enter a hexadecimal string of length 32 for", place, ": ")
+        inp = input()
+        if len(inp) != 32:
+            print("Error: Hex string must be exactly 32 characters long.")
+        elif not all(c in '0123456789abcdef' for c in inp):
+            print("Error: Hex string must only contain hexadecimal characters (0-9, a-f).")
+        else:
+            return inp
 
 def main(): 
-    plain_text = get_random_bytes(16)
-    print("\nplain_text", plain_text)
-    master_key = "ddee540d70661c716d12c764c450ecee"
-    print("master key", master_key, "\n")
+    choice = int(input("Enter 0 for user input \nEnter 1 for randomly generated plain_text and master_key: "))
+    plain_text = ""
+    master_key = ""
+    if choice == 1:
+        plain_text = get_random_bytes(16)
+        print("\nplain_text", plain_text)
+        master_key = get_random_bytes(16)
+        print("master key", master_key, "\n")
+    elif choice == 0:
+        plain_text = get_input("plain_text")
+        print("\nplain_text:", plain_text)
+        master_key = get_input("master_key")
+        print("master key:", master_key, "\n")
+    else: 
+        print("Wrong choice: ", choice)
+        return 1
     
     print("==== ENCRYPTION BEGINS ==== \n")
     cipher_text = encrypt_128(plain_text, master_key)
