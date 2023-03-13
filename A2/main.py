@@ -125,10 +125,11 @@ def decrypt_128(cipher_text, master_key):
 
 
 def main(): 
-    plain_text = "dd06309f04da87df644726e304234012"
-    print("\nplain_text ", plain_text)
+    plain_text = get_random_bytes(16)
+    print("\nplain_text", plain_text)
     master_key = "ddee540d70661c716d12c764c450ecee"
     print("master key", master_key, "\n")
+    
     print("==== ENCRYPTION BEGINS ==== \n")
     cipher_text = encrypt_128(plain_text, master_key)
     print("\n==== DECRYPTION BEGINS ==== \n")
@@ -142,3 +143,6 @@ def main():
 
 if __name__ == '__main__':  
     main()
+
+# plain_text = "dd06309f04da87df644726e304234012"
+# master_key = "ddee540d70661c716d12c764c450ecee"
