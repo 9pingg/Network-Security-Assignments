@@ -441,26 +441,26 @@ if __name__=="__main__":
     res = [ord(ele) for sub in M1 for ele in sub]
     # print(res)
     print('\n')
-    print("Sending the Message to Bob ....")
+    print("Sending the Message to Bob using Bob's public key to encrypt....")
     print("Message to be sent : ",M1[0])
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res)):
-        encrypted_M.append(((res[i]**alice_private[0]) % alice_public[1]))
+        encrypted_M.append(((res[i]**decrypt1) % Bob_public[1]))
     print("Normal Message in ascii",res)
     print("Encrypted Message in acii ",encrypted_M)
     print('\n')
-    print("Bob's Decrytps the Message using Alice public Key :")
+    print("Bob's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt2) % alice_public[1]))
+        decrypted_M.append(((encrypted_M[i]**Bob_private[0]) % Bob_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
         recived_Message+=chr(val)
     print("Decrypted Message :" ,recived_Message)
 
-    print("Bob will respond to Alice that he recieved the Message")
-    print("Bob send message to Alice using his private key to encrypt")
+    print("Bob will respond to Alice that he recieved the Message.")
+    print("Bob send message to Alice using public key of Alice to encrypt.")
 
     res2 = [ord(ele) for sub in G1 for ele in sub]
     print("Sending the Message to Alice ....")
@@ -468,13 +468,13 @@ if __name__=="__main__":
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res2)):
-        encrypted_M.append(((res2[i]**Bob_private[0]) % Bob_public[1]))
+        encrypted_M.append(((res2[i]**decrypt2) % alice_public[1]))
     print("Normal Message in ascii",res2)
     print("Encrypted Message ",encrypted_M)
     print('\n')
-    print("Alice's Decrytps the Message using Bob's public Key :")
+    print("Alice's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt1) % Bob_public[1]))
+        decrypted_M.append(((encrypted_M[i]**alice_private[0]) % alice_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
@@ -485,33 +485,33 @@ if __name__=="__main__":
     print("***********************************************************************************"
           "************************************************************")
 
-    print(" Similarly Alice Send 2nd Message to Bob by using his own private Key to encrypt the Message :")
+    print(" Similarly Alice Send 2nd Message to Bob by using  Bob's public Key to encrypt the Message :")
     M1 = ['Hi2']
     G1 = ['Got-it2']
     # for i in range(0,3):
     res = [ord(ele) for sub in M1 for ele in sub]
     # print(res)
     print('\n')
-    print("Sending the Message to Bob....")
+    print("Sending the Message to Bob using Bob's public key....")
     print("Message to be sent : ",M1[0])
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res)):
-        encrypted_M.append(((res[i]**alice_private[0]) % alice_public[1]))
+        encrypted_M.append(((res[i]**decrypt1) % Bob_public[1]))
     print("Normal Message in ascii",res)
     print("Encrypted Message in acii ",encrypted_M)
     print('\n')
-    print("Bob's Decrytps the Message using Alice public Key :")
+    print("Bob's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt2) % alice_public[1]))
+        decrypted_M.append(((encrypted_M[i]**Bob_private[0]) % Bob_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
         recived_Message+=chr(val)
     print("Decrypted Message :" ,recived_Message)
 
-    print("Bob will respond to Alice that he recieved the Message")
-    print("Bob send message to Alice using his private key to encrypt")
+    print("Bob will respond to Alice that he recieved the Message.")
+    print("Bob send message to Alice using Alice public key to encrypt.")
 
     res2 = [ord(ele) for sub in G1 for ele in sub]
     print("Sending the Message to Alice....")
@@ -519,13 +519,13 @@ if __name__=="__main__":
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res2)):
-        encrypted_M.append(((res2[i]**Bob_private[0]) % Bob_public[1]))
+        encrypted_M.append(((res2[i]**decrypt2) % alice_public[1]))
     print("Normal Message in ascii",res2)
     print("Encrypted Message ",encrypted_M)
     print('\n')
-    print("Alice's Decrytps the Message using Bob's public Key :")
+    print("Alice's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt1) % Bob_public[1]))
+        decrypted_M.append(((encrypted_M[i]**alice_private[0]) % alice_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
@@ -536,7 +536,7 @@ if __name__=="__main__":
     print("***********************************************************************************"
           "************************************************************")
 
-    print(" Similarly Alice Send 3rd Message to Bob by using his own private Key to encrypt the Message :")
+    print(" Similarly Alice Send 3rd Message to Bob by using Bob's public Key to encrypt the Message :")
     M1 = ['Hi3']
     G1 = ['Got-it3']
     # for i in range(0,3):
@@ -548,21 +548,21 @@ if __name__=="__main__":
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res)):
-        encrypted_M.append(((res[i]**alice_private[0]) % alice_public[1]))
+        encrypted_M.append(((res[i]**decrypt1) % Bob_public[1]))
     print("Normal Message in ascii",res)
     print("Encrypted Message in acii ",encrypted_M)
     print('\n')
-    print("Bob's Decrytps the Message using Alice public Key :")
+    print("Bob's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt2) % alice_public[1]))
+        decrypted_M.append(((encrypted_M[i]**Bob_private[0]) % Bob_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
         recived_Message+=chr(val)
     print("Decrypted Message :" ,recived_Message)
 
-    print("Bob will respond to Alice that he recieved the Message")
-    print("Bob send message to Alice using his private key to encrypt")
+    print("Bob will respond to Alice that he recieved the Message.")
+    print("Bob send message to Alice using Alice public key to encrypt.")
 
     res2 = [ord(ele) for sub in G1 for ele in sub]
     print("Sending the Message to Alice....")
@@ -570,32 +570,17 @@ if __name__=="__main__":
     encrypted_M=[]
     decrypted_M=[]
     for i in range(0,len(res2)):
-        encrypted_M.append(((res2[i]**Bob_private[0]) % Bob_public[1]))
+        encrypted_M.append(((res2[i]**decrypt2) % alice_public[1]))
     print("Normal Message in ascii",res2)
     print("Encrypted Message ",encrypted_M)
     print('\n')
-    print("Alice's Decrytps the Message using Bob's public Key :")
+    print("Alice's Decrytps the Message using his private Key :")
     for i in range(0,len(encrypted_M)):
-        decrypted_M.append(((encrypted_M[i]**decrypt1) % Bob_public[1]))
+        decrypted_M.append(((encrypted_M[i]**alice_private[0]) % alice_public[1]))
     print("Decrypted Message in ascii",decrypted_M)
     recived_Message = ""
     for val in decrypted_M:
         recived_Message+=chr(val)
     print("Decrypted Message :" ,recived_Message)
     
-
-
-    
-    # M = 19070
-    # S = (alice_public[0]**pkda_private[0]) % pkda_public[1]
-    # print("Signature Created by PKDA", S)
-    # M1 = (S**pkda_public[0]) % pkda_public[1]
-    # print(M1)
-    # if M == M1:
-    #     print("As M = M1, Accept the\
-    #     message sent by Alice")
-    # else:
-    #     print("As M not equal to M1,\
-    #     Do not accept the message\
-    #     sent by Alice ")
 
