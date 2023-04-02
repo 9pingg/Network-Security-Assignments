@@ -434,7 +434,7 @@ if __name__=="__main__":
 
     
     print('\n')
-    print(" Step 7: Now after establishment of connection ,Alice Send Message to Bob by using his own private Key to encrypt the Message :")
+    print(" Step 7: Now after establishment of connection ,Alice Send Message to Bob by using Bob's public key to encrypt the Message :")
     M1 = ['Hi1']
     G1 = ['Got-it1']
     # for i in range(0,3):
