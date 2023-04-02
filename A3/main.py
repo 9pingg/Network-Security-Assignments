@@ -1,4 +1,4 @@
-import RSA_a3
+import RSA
 import time
 import random
 import hashlib 
@@ -35,7 +35,7 @@ class PKDA:
     def generate_pkda_keys(self):
         print('\n')
         print("Enter pkda's keys : ")
-        pkda_public, pkda_private  = RSA_a3.generate_keypair(1)
+        pkda_public, pkda_private  = RSA.generate_keypair(1)
         pkda.res.append(pkda_public)
         pkda.res.append(pkda_private) 
         return pkda.res
@@ -312,13 +312,13 @@ class Client:
 if __name__=="__main__":
 
     print("Enter Alice Keys")
-    alice_public,alice_private = RSA_a3.generate_keypair(1)
+    alice_public,alice_private = RSA.generate_keypair(1)
     print("Alice Public Keys:",alice_public)
     print("Alice Private Keys:",alice_private)
     print('\n')
 
     print("Enter Bob's Keys")
-    Bob_public,Bob_private = RSA_a3.generate_keypair(1)
+    Bob_public,Bob_private = RSA.generate_keypair(1)
     print("Bob's Public Keys:",Bob_public)
     print("Bob's Private Keys:",Bob_private)
 
