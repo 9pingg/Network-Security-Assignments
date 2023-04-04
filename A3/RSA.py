@@ -1,46 +1,53 @@
 import random
 
-def To_find_gcd(a, b):
+def to_find_gcd(a, b):
     while b != 0:
-        a, b = b, a % b
+        temp = b
+        b = a % b
+        a = temp
     return a
 
-def extended_gcd_algo(a, b):
-    if a == 0:
-        return (b, 0, 1)
-    else:
-        g, y, x = extended_gcd_algo(b % a, a)
-        return (g, x - (b // a) * y, y)
 
-def mod_inverse(a, m):
-    g, x, y = extended_gcd_algo(a, m)
+def extended_gcd_algo(a1, a2):
+    if a1 == 0:
+        return (a2, 0, 1)
+    
+    g, x, y = extended_gcd_algo(a2 % a1, a1)
+    new_x = y - (a2 // a1) * x
+    new_y = x
+    return (g, new_x, new_y)
+
+def mod_inverse_func(a, mod):
+    g, x, y = extended_gcd_algo(a, mod)
     if g != 1:
-        raise ValueError('Modular inverse does not exist')
+        return None
     else:
-        return x % m
+        return x % mod
 
-def is_prime(num):
-    if num < 2:
-        return False
-    for i in range(2, int(num**0.5) + 1):
-        if num % i == 0:
+
+def checkPrime(n):
+    if n <= 1: return False
+    # Check if the number is divisible by any integer from 2 to sqrt(num)
+    sqrt_num = int(n** 0.5) + 1
+    for x in range(2, sqrt_num):
+        if n % x == 0:
             return False
     return True
 
 def generate_keypair(choice):
     if choice ==0:
         p = random.randint(100, 1000)
-        while not is_prime(p):
+        while not checkPrime(p):
             p += 1
         q = random.randint(1000, 10000)
-        while not is_prime(q):
+        while not checkPrime(q):
             q += 1
         n = p * q
         phi = (p-1) * (q-1)
         e = random.randint(2, phi-1)
-        while To_find_gcd(e, phi) != 1:
+        while to_find_gcd(e, phi) != 1:
             e += 1
-        d = mod_inverse(e, phi)
+        d = mod_inverse_func(e, phi)
         return ((e, n), (d, n))
     else:
         print("Enter Prime numbers p and q")
@@ -49,9 +56,9 @@ def generate_keypair(choice):
         n = p * q
         phi = (p-1) * (q-1)
         e = random.randint(2, phi-1)
-        while To_find_gcd(e, phi) != 1:
+        while to_find_gcd(e, phi) != 1:
             e += 1
-        d = mod_inverse(e, phi)
+        d = mod_inverse_func(e, phi)
         return ((e, n), (d, n))
 
 if __name__=="__main__":
