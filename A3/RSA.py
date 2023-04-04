@@ -1,19 +1,19 @@
 import random
 
-def gcd(a, b):
+def To_find_gcd(a, b):
     while b != 0:
         a, b = b, a % b
     return a
 
-def extended_gcd(a, b):
+def extended_gcd_algo(a, b):
     if a == 0:
         return (b, 0, 1)
     else:
-        g, y, x = extended_gcd(b % a, a)
+        g, y, x = extended_gcd_algo(b % a, a)
         return (g, x - (b // a) * y, y)
 
 def mod_inverse(a, m):
-    g, x, y = extended_gcd(a, m)
+    g, x, y = extended_gcd_algo(a, m)
     if g != 1:
         raise ValueError('Modular inverse does not exist')
     else:
@@ -38,7 +38,7 @@ def generate_keypair(choice):
         n = p * q
         phi = (p-1) * (q-1)
         e = random.randint(2, phi-1)
-        while gcd(e, phi) != 1:
+        while To_find_gcd(e, phi) != 1:
             e += 1
         d = mod_inverse(e, phi)
         return ((e, n), (d, n))
@@ -49,28 +49,12 @@ def generate_keypair(choice):
         n = p * q
         phi = (p-1) * (q-1)
         e = random.randint(2, phi-1)
-        while gcd(e, phi) != 1:
+        while To_find_gcd(e, phi) != 1:
             e += 1
         d = mod_inverse(e, phi)
         return ((e, n), (d, n))
 
-def encrypt(public_key, plaintext):
-    e, n = public_key
-    ciphertext = [(ord(char) ** e) % n for char in plaintext]
-    return ciphertext
-
-def decrypt(private_key, ciphertext):
-    d, n = private_key
-    plaintext = [chr((char ** d) % n) for char in ciphertext]
-    return ''.join(plaintext)
-
 if __name__=="__main__":
 
     public, private = generate_keypair()
-    print(public)
-    print(private)
-    message = 'Hello, world!'
-    encrypted_message = encrypt(public, message)
-    decrypted_message = decrypt(private, encrypted_message)
-
     
