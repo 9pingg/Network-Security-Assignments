@@ -35,6 +35,7 @@ def checkPrime(n):
     return True
 
 def generate_keypair(choice):
+    # to generate keypair ((e, n), (d, n))
     if choice ==0:
         p = random.randint(100, 1000)
         while not checkPrime(p):
