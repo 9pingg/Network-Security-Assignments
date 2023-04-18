@@ -1,0 +1,12 @@
+tsa.crt is a variable that points to the path of the TLS/SSL certificate file of the TSA server. 
+The certificate file is used by the client to verify the identity of the server during the SSL/TLS handshake process.
+
+To generate this:
+
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+password: abcd
+
+openssl x509 -pubkey -noout -in cert.pem > server.pub
+
+This will generate a self-signed TLS/SSL certificate file named tsa.crt and a private key file named tsa.key. 
+Generally, We use TLS/SSL certificate signed by a trusted certificate authority (CA) instead of using a self-signed certificate.
