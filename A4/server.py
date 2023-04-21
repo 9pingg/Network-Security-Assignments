@@ -1,5 +1,6 @@
 import socket
 import datetime
+import pytz
 import ssl
 from base64 import b64decode
 from base64 import b64encode
@@ -7,6 +8,14 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
+
+
+# Get the current UTC time
+utc_time = datetime.datetime.utcnow()
+
+# Convert UTC time to GMT time zone
+gmt_timezone = pytz.timezone('GMT')
+gmt_time = utc_time.replace(tzinfo=pytz.utc).astimezone(gmt_timezone)
 
 
 # Path to the TLS certificate and private key
@@ -47,9 +56,15 @@ def tsa_server():
             data = sls_connection.recv(4096)
 
             if data:
-                # Calculate the timestamp
-                timestamp = datetime.datetime.now().isoformat().encode('utf-8')
 
+                # Calculate the timestamp
+                # Get the current UTC time
+                utc_time = datetime.datetime.utcnow()
+                
+                # Convert UTC time to GMT time zone to get the timestamp
+                gmt_timezone = pytz.timezone('GMT')
+                timestamp = str(utc_time.replace(tzinfo=pytz.utc).astimezone(gmt_timezone)).encode('utf-8')        
+                
                 # Calculate the hash of the timestamped hash
                 data_with_tstamp_pubkey = data + timestamp + tsa_pub_key
                 hash_func = SHA256.new()

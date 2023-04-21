@@ -19,7 +19,7 @@ ssl_context.load_cert_chain(certfile=client_cert, keyfile=client_key)
 ssl_context.load_verify_locations(cafile=tsa_cert)
 
 # Generate a hash of the file to be timestamped
-fp = "cert_generate.txt"
+fp = "sample.txt"
 with open(fp, "rb") as f:
     file_data = f.read()
     file_hash = hashlib.sha256(file_data).hexdigest()
